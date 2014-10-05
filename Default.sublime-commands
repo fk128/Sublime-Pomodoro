@@ -1,6 +1,10 @@
 [
     {
-        "caption": "pomodoro",
-        "command": "pomodoro"
+        "caption": "pomodoro: start",
+        "command": "pomodoro_start"
+    },
+    {
+        "caption": "pomodoro: cancel",
+        "command": "pomodoro_cancel"
     }
 ]
