@@ -3,6 +3,7 @@ import sublime_plugin
 import threading
 import functools
 import time
+import os
 
 timeRecorder_thread = None
 
@@ -41,6 +42,7 @@ class TimeRecorder(threading.Thread):
 
     def recording(self, runningMins, displayCallback):
         leftMins = runningMins
+        self.startTime = time.strftime("%H:%M:%S")
         while leftMins > 1 and not self.stopped():
             for i in range(1, 60):
                 sublime.set_timeout(functools.partial(displayCallback, runningMins, leftMins), 10)
@@ -56,14 +58,18 @@ class TimeRecorder(threading.Thread):
                 if self.stopped():
                     break
             leftMins = leftMins - 1
+        self.endTime = time.strftime("%H:%M:%S")
 
     def run(self):
         while 1:
             self.recording(self.workingMins, updateWorkingTimeStatus)
             self.pomodoroCounter = self.pomodoroCounter + 1
 
+            if settings().get("event_logging"):
+                sublime.active_window().show_input_panel("What did you just do?:", "", self.add_to_log, None, None)
+            
             if self.stopped(): 
-                sublime.error_message('Pomodoro Cancelled')
+                #sublime.error_message('Pomodoro Cancelled')
                 break
 
             breakType =  self.pomodoroCounter % (self.numberPomodoro)
@@ -91,6 +97,19 @@ class TimeRecorder(threading.Thread):
     def stopped(self):
         return self.stopFlag
 
+    def add_to_log(self, entry):
+        directory = os.path.expanduser(settings().get('root'))
+        filename = settings().get('log_filename')
+        filen = os.path.join(directory, filename)
+        f = open(filen, 'a')
+        f.write('* ' + str(time.strftime('%d/%m/%Y')) + ' ')
+        f.write(str(self.startTime))
+        f.write(' - ')
+        f.write(str(self.endTime))
+        f.write('\t')
+        f.write(entry)
+        f.write('\n')
+        f.close()
 
 
 class PomodoroStartCommand(sublime_plugin.ApplicationCommand):
@@ -112,8 +131,9 @@ class PomodoroCancelCommand(sublime_plugin.ApplicationCommand):
 
     def run(self):
         global timeRecorder_thread
-        cancel = sublime.ok_cancel_dialog('Are you sure you want to cancel?', 'Yes')
-        if cancel:
-            timeRecorder_thread.stop()
+        if not (timeRecorder_thread is None): 
+            cancel = sublime.ok_cancel_dialog('Are you sure you want to cancel?', 'Yes')
+            if cancel:
+                timeRecorder_thread.stop()
 
 

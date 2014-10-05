@@ -2,5 +2,9 @@
 	"pomodoro_mins": 25,
 	"shortbreak_mins": 5,
 	"longbreak_mins": 10,
-	"number_pomodoro": 4
+	"number_pomodoro": 4,
+	"event_logging": true,
+
+	"root": "~/Dropbox/Notes",
+	"log_filename": "pomolog.md"
 }
