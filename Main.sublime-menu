@@ -1,0 +1,33 @@
+[
+{
+    "caption": "Preferences",
+    "mnemonic": "pomo",
+    "id": "preferences",
+    "children":
+    [
+        {
+            "caption": "Package Settings",
+            "id": "package-settings",
+            "children":
+            [
+                {
+                    "caption": "Sublime-Pomodoro",
+                    "children":
+                    [
+                        {
+                            "command": "open_file",
+                            "args": {"file": "${packages}/Sublime-Pomodoro/pomodoro.sublime-settings" },
+                            "caption": "Settings – Default"
+                        },
+                        {
+                            "command": "open_file",
+                            "args": {"file": "${packages}/User/pomodoro.sublime-settings"},
+                            "caption": "Settings – User"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
+]
