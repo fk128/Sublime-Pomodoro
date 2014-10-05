@@ -1,5 +1,6 @@
 {
-	"working_mins": 2,
+	"pomodoro_mins": 25,
 	"shortbreak_mins": 5,
-	"longbreak_mins": 10
+	"longbreak_mins": 10,
+	"number_pomodoro": 4
 }
