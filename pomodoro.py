@@ -39,6 +39,7 @@ class TimeRecorder(threading.Thread):
         self.numberPomodoro = (settings().get("number_pomodoro"))
         self.stopFlag = False
         self.pomodoroCounter = 0
+        self.wait = True
 
     def recording(self, runningMins, displayCallback):
         leftMins = runningMins
@@ -66,12 +67,16 @@ class TimeRecorder(threading.Thread):
             self.pomodoroCounter = self.pomodoroCounter + 1
 
             if settings().get("event_logging"):
-                sublime.active_window().show_input_panel("What did you just do?:", "", self.add_to_log, None, None)
+                sublime.active_window().show_input_panel("What did you just do?:", "", self.add_to_log, None, self.on_cancel)
             
             if self.stopped(): 
                 #sublime.error_message('Pomodoro Cancelled')
                 break
+                
+            while self.wait:
+                time.sleep(1)
 
+            self.wait = True
             breakType =  self.pomodoroCounter % (self.numberPomodoro)
             print(breakType)
             if breakType == 0:
@@ -97,6 +102,11 @@ class TimeRecorder(threading.Thread):
     def stopped(self):
         return self.stopFlag
 
+    def on_cancel(self):
+        self.stop()
+        self.wait = False
+        self.add_to_log('')
+
     def add_to_log(self, entry):
         directory = os.path.expanduser(settings().get('root'))
         filename = settings().get('log_filename')
@@ -110,6 +120,7 @@ class TimeRecorder(threading.Thread):
         f.write(entry)
         f.write('\n')
         f.close()
+        self.wait = False
 
 
 class PomodoroStartCommand(sublime_plugin.ApplicationCommand):
